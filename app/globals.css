@@ -1,5 +1,56 @@
 @import "tailwindcss";
 
+/* ── Tema claro ──
+   O layout desta aplicação usa cores fixas (hex) em quase todos os
+   componentes. Em vez de reescrever cada página, o tema claro
+   sobrepõe as cores mais usadas do "shell" (fundo, sidebar, texto,
+   bordas) via atributo em <html>. Cobre a navegação e os containers
+   principais; alguns elementos muito específicos de páginas
+   individuais podem manter tons escuros residuais. */
+html[data-tema="light"] {
+  color-scheme: light;
+}
+
+html[data-tema="light"] .bg-\[\#1a1a27\],
+html[data-tema="light"] .bg-\[\#03031b\],
+html[data-tema="light"] .bg-\[\#040927\],
+html[data-tema="light"] .bg-\[\#040928\],
+html[data-tema="light"] .bg-\[\#0a1240\],
+html[data-tema="light"] .bg-\[\#1a2942\],
+html[data-tema="light"] .bg-\[\#0e1a2b\],
+html[data-tema="light"] .bg-\[\#253657\],
+html[data-tema="light"] .bg-\[\#262537\],
+html[data-tema="light"] .bg-\[\#040825\] {
+  background-color: #f4f6fb !important;
+}
+
+html[data-tema="light"] .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+html[data-tema="light"] .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-tema="light"] .border-\[\#333344\],
+html[data-tema="light"] .border-\[\#050e4c\],
+html[data-tema="light"] .border-\[\#1a2a80\] {
+  border-color: #dbe1ee !important;
+}
+
+html[data-tema="light"] .text-white {
+  color: #101828 !important;
+}
+
+html[data-tema="light"] .text-gray-300,
+html[data-tema="light"] .text-gray-400 {
+  color: #475467 !important;
+}
+
+html[data-tema="light"] .text-gray-500 {
+  color: #667085 !important;
+}
+
 
 .marg2{
  margin-left: 10px;

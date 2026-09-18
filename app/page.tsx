@@ -17,37 +17,16 @@ export default function Home() {
   const [userName, setUserName] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const [totpUsuarioId, setTotpUsuarioId] = useState('')
+  const [totpCodigo, setTotpCodigo] = useState('')
+  const [totpErro, setTotpErro] = useState('')
 
-    try {
-      setLoading(true)
+  const entrarComSessao = (data: { token: string; usuario: any }) => {
+    Cookies.set('token', data.token, { path: '/' })
+    Cookies.set('usuario', JSON.stringify(data.usuario), { path: '/' })
 
-      console.log('INICIOU LOGIN')
-
-      const response = await api.post('/auth/login', {
-        email,
-        senha: password,
-      })
-
-      console.log('RESPOSTA API:', response.data)
-
-      const data = response.data.data
-
-      if (!data?.token) {
-        throw new Error('Token não recebido')
-      }
-
-      // salva token
-Cookies.set('token', data.token, { path: '/' })
-
-// salva usuario
-Cookies.set('usuario', JSON.stringify(data.usuario), { path: '/' })
-
-      console.log('TOKEN SALVO')
-
-      setUserName(data.usuario.nome)
-      setShowWelcome(true)
+    setUserName(data.usuario.nome)
+    setShowWelcome(true)
 
      setTimeout(() => {
   if (data.usuario.papel === 'ADM') {
@@ -67,18 +46,59 @@ Cookies.set('usuario', JSON.stringify(data.usuario), { path: '/' })
 
   window.location.href = '/'
 }, 1500)
+  }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      setLoading(true)
+
+      const response = await api.post('/auth/login', {
+        email,
+        senha: password,
+      })
+
+      const data = response.data.data
+
+      if (data?.totpRequerido) {
+        setTotpUsuarioId(data.usuarioId)
+        return
+      }
+
+      if (!data?.token) {
+        throw new Error('Token não recebido')
+      }
+
+      entrarComSessao(data)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.error('ERRO LOGIN:', error)
-
       alert(
         error?.response?.data?.message ||
         error?.message ||
         'Erro ao fazer login'
       )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleTotpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setTotpErro('')
+
+    try {
+      setLoading(true)
+      const response = await api.post('/auth/login/totp', {
+        usuarioId: totpUsuarioId,
+        codigo:    totpCodigo,
+      })
+      const data = response.data.data
+      if (!data?.token) throw new Error('Token não recebido')
+      entrarComSessao(data)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setTotpErro(error?.response?.data?.message ?? 'Código inválido')
     } finally {
       setLoading(false)
     }
@@ -95,6 +115,49 @@ Cookies.set('usuario', JSON.stringify(data.usuario), { path: '/' })
 
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+
+      {/* Modal verificação 2FA */}
+      {totpUsuarioId && !showWelcome && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <form
+            onSubmit={handleTotpSubmit}
+            className="bg-gradient-to-br from-[#040928] to-[#0e1a3a] border border-[#050e4c] rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl flex flex-col gap-4"
+          >
+            <h2 className="text-xl font-bold text-white">Verificação em dois fatores</h2>
+            <p className="text-gray-400 text-sm">Introduz o código de 6 dígitos da tua aplicação autenticadora.</p>
+
+            {totpErro && (
+              <div className="p-2 rounded-lg bg-red-600/20 border border-red-600 text-red-400 text-sm">{totpErro}</div>
+            )}
+
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              value={totpCodigo}
+              onChange={(e) => setTotpCodigo(e.target.value.replace(/\D/g, ''))}
+              placeholder="000000"
+              autoFocus
+              className="p-3 text-center text-2xl tracking-[0.5em] border border-[#050e4c] rounded-lg outline-none bg-[#03031b] text-white focus:border-blue-500"
+            />
+
+            <button
+              type="submit"
+              disabled={loading || totpCodigo.length !== 6}
+              className="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all disabled:opacity-50"
+            >
+              {loading ? 'A verificar...' : 'Verificar'}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setTotpUsuarioId(''); setTotpCodigo(''); setTotpErro('') }}
+              className="text-sm text-gray-400 hover:text-white"
+            >
+              Voltar ao login
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Welcome modal */}
       {showWelcome && (

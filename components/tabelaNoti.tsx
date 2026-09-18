@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { ChevronDown, X, Download, Circle, Power } from 'lucide-react'
+import { api } from '@/lib/api'
 
 export interface Notificacao {
   id: number
@@ -41,6 +42,20 @@ export default function TabelaNotificacoes({ dados, dados2 }: TabelaNotificacoes
   const abrirModal = (item: DadosPagamento) => {
     setItemSelecionado(item)
     setModalAberto(true)
+  }
+
+  const baixarFatura = async (id: string) => {
+    try {
+      const res = await api.get(`/pagamentos/${id}/fatura`, { responseType: 'blob' })
+      const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `fatura_${id.slice(0, 8)}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('Erro ao baixar fatura.')
+    }
   }
 
   const fecharModal = () => {
@@ -172,7 +187,10 @@ export default function TabelaNotificacoes({ dados, dados2 }: TabelaNotificacoes
                 )}
               </div>
 
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 text-sm font-medium transition-colors flex items-center justify-center gap-2">
+              <button
+                onClick={() => baixarFatura(itemSelecionado.id)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 text-sm font-medium transition-colors flex items-center justify-center gap-2"
+              >
                 <Download size={16} />
                 Baixar fatura
               </button>

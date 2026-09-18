@@ -8,15 +8,17 @@ interface Container2Props {
     children: React.ReactNode;
     filtros?: ReactNode;
     onAdicionar?: () => void;
+    qtdAdicionar?: number;
 }
 
-export default function Container2({ 
-    titulo, 
-    notificacao, 
-    usuario, 
-    children, 
+export default function Container2({
+    titulo,
+    notificacao,
+    usuario,
+    children,
     filtros,
-    onAdicionar 
+    onAdicionar,
+    qtdAdicionar
 }: Container2Props) {
     return (
         <div className="w-full h-full min-h-screen overflow-auto">
@@ -42,9 +44,11 @@ export default function Container2({
                                 className="relative  text-white p-2 rounded-full transition-colors shadow-md"
                             >
                                 <Notebook size={30} />
-                                <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                    8
-                                </span>
+                                {!!qtdAdicionar && (
+                                    <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                        {qtdAdicionar}
+                                    </span>
+                                )}
                             </button>
                             
                             {/* Notificação e usuário */}

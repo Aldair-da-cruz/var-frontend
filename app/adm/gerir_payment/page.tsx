@@ -48,6 +48,7 @@ export default function Home() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any = { page: paginaAtual, limit: 10 }
       if (filtroStatus) params.status = filtroStatus
+      if (search) params.search = search
 
       const res = await api.get('/pagamentos', { params })
       setPagamentos(res.data.data)
@@ -71,11 +72,11 @@ export default function Home() {
     } finally {
       setCarregando(false)
     }
-  }, [paginaAtual, filtroStatus])
+  }, [paginaAtual, filtroStatus, search])
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    carregarPagamentos()
+    const timer = setTimeout(carregarPagamentos, 300)
+    return () => clearTimeout(timer)
   }, [carregarPagamentos])
 
   const atualizarStatus = async (id: string, status: 'Concluido' | 'Pendente' | 'Reembolsado') => {
@@ -116,6 +117,7 @@ export default function Home() {
           notificacao={<Bell size={20} />}
           usuario={nomeUsuario}
           onAdicionar={() => setMostrarNoti(true)}
+          qtdAdicionar={resumo.pendentes}
           filtros={
             <>
               <select
@@ -146,7 +148,7 @@ export default function Home() {
                     type="text"
                     placeholder="Pesquisar..."
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => { setSearch(e.target.value); setPaginaAtual(1) }}
                     className="outline-none placeholder:text-gray-500 h-10 w-full bg-transparent text-sm text-white"
                   />
                 </div>
