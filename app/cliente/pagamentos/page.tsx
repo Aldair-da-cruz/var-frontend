@@ -112,13 +112,13 @@ export default function Dashboard() {
       ])
 
       if (resLic.status === 'fulfilled') {
-        const lista = resLic.value?.data?.data?.data ?? []
+        const lista = resLic.value?.data?.data ?? []
         if (lista.length > 0) setLicenca(lista[0])
       }
 
       if (resPag.status === 'fulfilled') {
-        setPagamentos(resPag.value?.data?.data?.data ?? [])
-        setTotalPaginas(resPag.value?.data?.data?.meta?.totalPages ?? 1)
+        setPagamentos(resPag.value?.data?.data ?? [])
+        setTotalPaginas(resPag.value?.data?.meta?.totalPages ?? 1)
       }
     } catch (err) {
       console.error('Erro ao carregar:', err)

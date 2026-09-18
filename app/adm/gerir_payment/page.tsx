@@ -36,9 +36,11 @@ export default function Home() {
   const [totalPaginas,  setTotalPaginas]  = useState(1)
   const [mostrarNoti,   setMostrarNoti]   = useState(false)
 
-  const nomeUsuario = (() => {
-    try { return JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM' } catch { return 'ADM' }
-  })()
+  const [nomeUsuario, setNomeUsuario] = useState('ADM')
+
+  useEffect(() => {
+    try { setNomeUsuario(JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM') } catch { /* ignora */ }
+  }, [])
 
   const carregarPagamentos = useCallback(async () => {
     try {
@@ -48,9 +50,8 @@ export default function Home() {
       if (filtroStatus) params.status = filtroStatus
 
       const res = await api.get('/pagamentos', { params })
-      const data = res.data.data
-      setPagamentos(data.data)
-      setTotalPaginas(data.meta.totalPages)
+      setPagamentos(res.data.data)
+      setTotalPaginas(res.data.meta.totalPages)
 
       // Calcular resumo dos cards
       const [concRes, penRes, remRes, totRes] = await Promise.allSettled([
@@ -60,10 +61,10 @@ export default function Home() {
         api.get('/pagamentos', { params: { limit: 1 } }),
       ])
       setResumo({
-        concluidos:   concRes.status === 'fulfilled' ? concRes.value.data.data.meta.total : 0,
-        pendentes:    penRes.status  === 'fulfilled' ? penRes.value.data.data.meta.total  : 0,
-        reembolsados: remRes.status  === 'fulfilled' ? remRes.value.data.data.meta.total  : 0,
-        total:        totRes.status  === 'fulfilled' ? totRes.value.data.data.meta.total   : 0,
+        concluidos:   concRes.status === 'fulfilled' ? concRes.value.data.meta.total : 0,
+        pendentes:    penRes.status  === 'fulfilled' ? penRes.value.data.meta.total  : 0,
+        reembolsados: remRes.status  === 'fulfilled' ? remRes.value.data.meta.total  : 0,
+        total:        totRes.status  === 'fulfilled' ? totRes.value.data.meta.total   : 0,
       })
     } catch (err) {
       console.error('Erro ao carregar pagamentos:', err)

@@ -71,8 +71,8 @@ export default function Dashboard() {
       if (pesquisa)     params.search = pesquisa
 
       const res = await api.get('/funcionarios', { params })
-      setFuncionarios(res.data.data.data)
-      setTotalPaginas(res.data.data.meta.totalPages)
+      setFuncionarios(res.data.data)
+      setTotalPaginas(res.data.meta.totalPages)
 
       const [tot, ati, ina, pen] = await Promise.allSettled([
         api.get('/funcionarios', { params: { empresaId, limit: 1 } }),
@@ -81,10 +81,10 @@ export default function Dashboard() {
         api.get('/funcionarios', { params: { empresaId, limit: 1, status: 'Pendente' } }),
       ])
       setResumo({
-        total:     tot.status === 'fulfilled' ? tot.value.data.data.meta.total : 0,
-        ativos:    ati.status === 'fulfilled' ? ati.value.data.data.meta.total : 0,
-        inativos:  ina.status === 'fulfilled' ? ina.value.data.data.meta.total : 0,
-        pendentes: pen.status === 'fulfilled' ? pen.value.data.data.meta.total : 0,
+        total:     tot.status === 'fulfilled' ? tot.value.data.meta.total : 0,
+        ativos:    ati.status === 'fulfilled' ? ati.value.data.meta.total : 0,
+        inativos:  ina.status === 'fulfilled' ? ina.value.data.meta.total : 0,
+        pendentes: pen.status === 'fulfilled' ? pen.value.data.meta.total : 0,
       })
     } catch (err) {
       console.error('Erro ao carregar funcionários:', err)

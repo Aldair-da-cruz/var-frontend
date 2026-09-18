@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CInput from "@/components/cInput"
 import Container from "@/components/container"
 import Sidebar from "@/components/sidebar"
@@ -20,10 +20,11 @@ export default function Home() {
   const [loading,  setLoading]  = useState(false)
   const [sucesso,  setSucesso]  = useState(false)
   const [erro,     setErro]     = useState('')
+  const [nomeUsuario, setNomeUsuario] = useState('ADM')
 
-  const nomeUsuario = (() => {
-    try { return JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM' } catch { return 'ADM' }
-  })()
+  useEffect(() => {
+    try { setNomeUsuario(JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM') } catch { /* ignora */ }
+  }, [])
 
   const handleChange = (campo: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [campo]: e.target.value }))

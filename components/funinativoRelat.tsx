@@ -5,10 +5,10 @@ import { UserX, Building2, MapPin, Calendar, Trash2, MoreHorizontal, Eye, UserMi
 interface FuncionarioInativo {
   id?: string;
   nome: string;
-  empresa?: string;
+  empresa?: string | { id: string; nome: string };
   cargo?: string;
   local?: string;
-  status: "Inativo" | "Suspenso";
+  status: string;
   criadoEm: string;
 }
 
@@ -88,7 +88,7 @@ export default function FuncionariosInativos({
 
               {/* empresa/cargo */}
               <div className="col-span-1 text-gray-300 text-xs truncate">
-                {item.empresa} - {item.cargo}
+                {typeof item.empresa === 'string' ? item.empresa : item.empresa?.nome} - {item.cargo}
               </div>
 
               {/* local */}

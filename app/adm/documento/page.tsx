@@ -42,9 +42,11 @@ export default function Home() {
   const [loadingUpload,  setLoadingUpload]  = useState(false)
   const [erroUpload,     setErroUpload]     = useState('')
 
-  const nomeUsuario = (() => {
-    try { return JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM' } catch { return 'ADM' }
-  })()
+  const [nomeUsuario, setNomeUsuario] = useState('ADM')
+
+  useEffect(() => {
+    try { setNomeUsuario(JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM') } catch { /* ignora */ }
+  }, [])
 
   const carregarDocumentos = useCallback(async () => {
     try {
@@ -52,8 +54,8 @@ export default function Home() {
       const res = await api.get('/documentos', {
         params: { page: paginaAtual, limit: 10, search: search || undefined },
       })
-      setDocumentos(res.data.data.data)
-      setTotalPaginas(res.data.data.meta.totalPages)
+      setDocumentos(res.data.data)
+      setTotalPaginas(res.data.meta.totalPages)
 
       const resResumo = await api.get('/documentos/resumo')
       setResumo(resResumo.data.data)
@@ -76,7 +78,7 @@ export default function Home() {
     setModalUpload(true)
     try {
       const res = await api.get('/empresas', { params: { limit: 100 } })
-      setEmpresas(res.data.data.data)
+      setEmpresas(res.data.data)
     } catch {
       setErroUpload('Erro ao carregar lista de empresas.')
     }

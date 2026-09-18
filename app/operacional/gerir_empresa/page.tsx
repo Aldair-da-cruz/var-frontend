@@ -57,7 +57,7 @@ export default function Dashboard() {
 
                 const listaAPI: EmpresaAPI[] =
                     empresasRes.status === "fulfilled"
-                        ? empresasRes.value.data.data.data ?? []
+                        ? empresasRes.value.data.data ?? []
                         : []
 
                 console.log("EMPRESAS API:", listaAPI)
