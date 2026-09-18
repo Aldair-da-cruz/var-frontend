@@ -57,7 +57,7 @@ export default function PerfilPage() {
           )
           promises.push(
             api.get('/logs', { params: { empresaId: u.empresaId, limit: 5 } }).then((res) => {
-              const logs = res.data?.data?.data ?? []
+              const logs = res.data?.data ?? []
               setAtividades(logs.map((l: any) => ({
                 descricao: l.acao,
                 data:      new Date(l.criadoEm).toLocaleDateString('pt-PT', {

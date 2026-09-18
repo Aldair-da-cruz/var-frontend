@@ -38,9 +38,11 @@ export default function Home() {
   const [tipoAccao,     setTipoAccao]     = useState<'ativar' | 'desativar'>('desativar')
   const [loadingAccao,  setLoadingAccao]  = useState(false)
 
-  const nomeUsuario = (() => {
-    try { return JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM' } catch { return 'ADM' }
-  })()
+  const [nomeUsuario, setNomeUsuario] = useState('ADM')
+
+  useEffect(() => {
+    try { setNomeUsuario(JSON.parse(Cookies.get('usuario') ?? '{}').nome ?? 'ADM') } catch { /* ignora */ }
+  }, [])
 
   const dataHoje = new Date().toLocaleDateString('pt-PT')
 
@@ -50,8 +52,8 @@ export default function Home() {
       const res = await api.get('/empresas', {
         params: { page: paginaAtual, limit: 10, search: search || undefined, status: filtroStatus },
       })
-      setEmpresas(res.data.data.data)
-      setTotalPaginas(res.data.data.meta.totalPages)
+      setEmpresas(res.data.data)
+      setTotalPaginas(res.data.meta.totalPages)
     } catch {
       setErro('Erro ao carregar empresas.')
     } finally {

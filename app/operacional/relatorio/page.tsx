@@ -41,17 +41,6 @@ export default function Dashboard() {
           funcionarioService.listar({ limit: 100 })
         ])
 
-        const [inativos, suspensos] = await Promise.all([
-            funcionarioService.listar(),
-            funcionarioService.listar()
-          ]);
-  
-          const dados = [
-            ...(inativos.data ?? inativos),
-            ...(suspensos.data ?? suspensos)
-          ];
-  
-        setFuncionarios(dados);
         setAlertas(resAlertas.data.data)
         setEquipamentos(resEquip.data.data)
         setFuncionarios(resFunc.data.data)
@@ -91,7 +80,7 @@ export default function Dashboard() {
               {/* Funcionários cadastrados */}
               <Caixa5
                 descricao="Funcionarios cadastrados"
-                num={funcionarios?.data?.length ?? 0}
+                num={funcionarios?.length ?? 0}
                 icon={<Users size={20} color="green" />}
               />
 
@@ -99,7 +88,7 @@ export default function Dashboard() {
               <Caixa5
                 descricao="Em serviço"
                 num={
-                  funcionarios?.data?.filter((f: any) => f.status === "Ativo")?.length ?? 0
+                  funcionarios?.filter((f: any) => f.status === "Ativo")?.length ?? 0
                 }
                 icon={<UserCheck2 size={20} color="green" />}
               />
@@ -108,7 +97,7 @@ export default function Dashboard() {
               <Caixa5
                 descricao="Em pausa"
                 num={
-                  funcionarios?.data?.filter((f: any) => f.status === "Inativo")?.length ?? 0
+                  funcionarios?.filter((f: any) => f.status === "Inativo")?.length ?? 0
                 }
                 icon={<UserX size={20} color="yellow" />}
               />
@@ -138,7 +127,10 @@ export default function Dashboard() {
 
           {/* SEGUNDA LINHA */}
           <div className="px-5 w-full">
-            <FuncionariosInativos dados={funcionarios} loading={loading} />
+            <FuncionariosInativos
+              dados={(funcionarios ?? []).filter((f: any) => f.status !== 'Ativo')}
+              loading={loading}
+            />
           </div>
 
           {/* EXTRA: RESUMO RÁPIDO (NOVO) */}
@@ -182,7 +174,7 @@ export default function Dashboard() {
                 </h2>
 
                 <p className="text-green-400 text-xl font-bold">
-                  {funcionarios?.data?.length ?? 0}
+                  {funcionarios?.length ?? 0}
                 </p>
 
                 <p className="text-gray-500 text-xs">

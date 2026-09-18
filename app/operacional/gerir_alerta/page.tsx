@@ -29,7 +29,7 @@ export default function Dashboard() {
 
         // ✅ CORREÇÃO CRÍTICA: fallback seguro
         const listaAPI: EmpresaAlertaAPI[] =
-          res.data?.data?.data ?? []
+          res.data?.data ?? []
 
         const lista = listaAPI.map(mapEmpresaAlerta)
 

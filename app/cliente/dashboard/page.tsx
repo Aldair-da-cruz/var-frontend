@@ -76,14 +76,14 @@ export default function Dashboard() {
         ])
 
         // Cards
-        const totalEquip  = resEquip.status  === 'fulfilled' ? resEquip.value?.data?.data?.meta?.total  ?? 0 : 0
-        const totalFun    = resFun.status    === 'fulfilled' ? resFun.value?.data?.data?.meta?.total    ?? 0 : 0
+        const totalEquip  = resEquip.status  === 'fulfilled' ? resEquip.value?.data?.meta?.total  ?? 0 : 0
+        const totalFun    = resFun.status    === 'fulfilled' ? resFun.value?.data?.meta?.total    ?? 0 : 0
         const totalAlerta = resAlertaResumo.status === 'fulfilled' ? resAlertaResumo.value?.data?.data?.total ?? 0 : 0
 
         // Dias restantes da licença
         let diasLicenca = 0
         if (resLic.status === 'fulfilled') {
-          const licencas = resLic.value?.data?.data?.data ?? []
+          const licencas = resLic.value?.data?.data ?? []
           if (licencas.length > 0) {
             const expira = new Date(licencas[0].expiraEm)
             const hoje   = new Date()
@@ -95,7 +95,7 @@ export default function Dashboard() {
 
         // Últimos alertas
         if (resAlertas.status === 'fulfilled') {
-          const lista = resAlertas.value?.data?.data?.data ?? []
+          const lista = resAlertas.value?.data?.data ?? []
           setAlertas(lista.map((a: any) => ({
             titulo: a.descricao,
             data:   new Date(a.criadoEm).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
@@ -104,7 +104,7 @@ export default function Dashboard() {
 
         // Gráfico de actividades (logs últimos 7 dias)
         if (resLogs.status === 'fulfilled') {
-          const logs  = resLogs.value?.data?.data?.data ?? []
+          const logs  = resLogs.value?.data?.data ?? []
           const hoje  = new Date()
           const semana: DadosGrafico[] = []
 
@@ -132,7 +132,7 @@ export default function Dashboard() {
         // Funcionários recentes
         if (resFun.status === 'fulfilled') {
           const resFunLista = await api.get('/funcionarios', { params: { empresaId, limit: 5 } })
-          const lista = resFunLista?.data?.data?.data ?? []
+          const lista = resFunLista?.data?.data ?? []
           setFuncionarios(lista.map((f: any) => ({
             funcionario:  f.nome,
             status:       f.status === 'Ativo' ? 'Ativo' : 'Inativo',
@@ -142,7 +142,7 @@ export default function Dashboard() {
 
         // Balanço de pagamentos
         if (resPag.status === 'fulfilled') {
-          const lista = resPag.value?.data?.data?.data ?? []
+          const lista = resPag.value?.data?.data ?? []
           const total = lista.length
 
           if (total > 0) {
