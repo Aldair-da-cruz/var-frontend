@@ -2,8 +2,8 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { Users } from 'lucide-react';
 
-interface DistribuicaoItem {
-  provincia: string;
+export interface DistribuicaoItem {
+  label: string;
   quantidade: number;
 }
 
@@ -12,23 +12,8 @@ interface DistribuicaoFuncionariosProps {
   total?: number;
 }
 
-export default function DistribuicaoFuncionarios({ 
-  dados = [
-    { provincia: "Luanda", quantidade: 457 },
-    { provincia: "Cuando Cubango", quantidade: 356 },
-    { provincia: "Huila", quantidade: 332 },
-    { provincia: "Inhambane", quantidade: 267 },
-    { provincia: "Benguela", quantidade: 389 },
-    { provincia: "Moxico Leste", quantidade: 344 },
-    { provincia: "Malanje", quantidade: 321 },
-    { provincia: "Luanda", quantidade: 457 },
-    { provincia: "Cuando Cubango", quantidade: 356 },
-    { provincia: "Huila", quantidade: 332 },
-    { provincia: "Inhambane", quantidade: 267 },
-    { provincia: "Benguela", quantidade: 389 },
-    { provincia: "Moxico Leste", quantidade: 344 },
-    { provincia: "Malanje", quantidade: 321 },
-  ],
+export default function DistribuicaoFuncionarios({
+  dados = [],
   total = dados.reduce((acc, item) => acc + item.quantidade, 0)
 }: DistribuicaoFuncionariosProps) {
 
@@ -40,7 +25,7 @@ export default function DistribuicaoFuncionarios({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <Users size={18} className="text-blue-400" />
-          <h2 className="text-white text-xl font-medium">Distribuição</h2>
+          <h2 className="text-white text-xl font-medium">Distribuição por Empresa</h2>
         </div>
         <span className="text-blue-400 text-xl font-medium">Total: {total}</span>
       </div>
@@ -49,6 +34,9 @@ export default function DistribuicaoFuncionarios({
       <div className="flex gap-4 h-[160px]">
         {/* Gráfico Pizza - AUMENTADO */}
         <div className="w-[180px] h-[160px]">
+          {dados.length === 0 ? (
+            <div className="w-full h-full flex items-center justify-center text-gray-500 text-xs">Sem dados</div>
+          ) : (
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -66,6 +54,7 @@ export default function DistribuicaoFuncionarios({
               </Pie>
             </PieChart>
           </ResponsiveContainer>
+          )}
         </div>
 
         {/* Lista de províncias - AUMENTADA */}
@@ -80,7 +69,7 @@ export default function DistribuicaoFuncionarios({
               <div key={index} className="flex items-center justify-between text-xs ">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cores[index % cores.length] }}></div>
-                  <span className="text-gray-300 mr-2">{item.provincia}</span>
+                  <span className="text-gray-300 mr-2">{item.label}</span>
                 </div>
                 <span className="text-white font-semibold">{item.quantidade}</span>
               </div>

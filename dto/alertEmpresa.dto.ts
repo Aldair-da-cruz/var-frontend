@@ -12,10 +12,12 @@ export interface EmpresaAlertaAPI {
     id: string
     nome: string
     nif: string
-    equipamentos: number
-    alertas: number
+    _count: {
+      equipamentos: number
+      alertas: number
+    }
   }
-  
+
   export function mapEmpresaAlerta(
     empresa: EmpresaAlertaAPI
   ): EmpresaListaAlerta {
@@ -23,7 +25,9 @@ export interface EmpresaAlertaAPI {
       id: empresa.id,
       nome: empresa.nome,
       nif: empresa.cnpj,
-      equipamentos: empresa._count?.equipamentos ?? 0,
-      alertas: empresa._count?.alertas ?? 0,
+      _count: {
+        equipamentos: empresa._count?.equipamentos ?? 0,
+        alertas: empresa._count?.alertas ?? 0,
+      },
     }
   }

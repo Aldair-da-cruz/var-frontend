@@ -18,6 +18,7 @@ export interface EmpresaAPI {
   _count?: {
     funcionarios: number
     equipamentos: number
+    alertas?: number
   }
 }
 
@@ -28,6 +29,6 @@ export function mapEmpresaToTabela(item: EmpresaAPI): Empresa {
       local: item.cnpj,
       funcionarios: item._count?.funcionarios ?? 0,
       status: normalizeStatus(item.status),
-      alertas: 0
+      alertas: item._count?.alertas ?? 0
     }
   }

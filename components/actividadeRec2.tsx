@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react';
-import { ChevronRight, CheckCircle, Circle } from 'lucide-react';
+import { CheckCircle, Circle } from 'lucide-react';
 
 interface Atividade {
   tipo: "login" | "logout" | "sistema";
@@ -14,15 +14,7 @@ interface AtividadesRecentesProps {
   atividades?: Atividade[];
 }
 
-export default function AtividadesRecentes({ 
-  atividades = [
-    { tipo: "login", descricao: "Funcionário João fez login", sistema: "Continental Tecno IA", hora: "Hoje - 14:32", status: "sucesso" },
-    { tipo: "login", descricao: "Funcionário João fez login", sistema: "Continental Tecno IA", hora: "Hoje - 13:10", status: "sucesso" },
-    { tipo: "logout", descricao: "Funcionário Adilson Maravilha terminou sessão", sistema: "Continental Tecno IA", hora: "Hoje - 12:25", status: "sucesso" },
-    { tipo: "sistema", descricao: "Configuração de alertas atualizada", sistema: "Continental Tecno IA", hora: "Hoje - 12:11", status: "info" },
-    { tipo: "sistema", descricao: "Novo equipamento adicionado", sistema: "Continental Tecno IA", hora: "Hoje - 11:50", status: "info" },
-  ] 
-}: AtividadesRecentesProps) {
+export default function AtividadesRecentes({ atividades = [] }: AtividadesRecentesProps) {
 
   const [tabAtiva, setTabAtiva] = useState<'logins' | 'sistema'>('logins');
 
@@ -42,10 +34,6 @@ export default function AtividadesRecentes({
       {/* Cabeçalho */}
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-white text-base font-semibold">Atividades Recentes</h2>
-        <a href="#" className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors text-xs">
-          Ver tudo
-          <ChevronRight size={14} />
-        </a>
       </div>
 
       {/* Tabs de alternância Logins / Sistema */}

@@ -18,6 +18,16 @@ import {
 
 import { relatorioService } from "@/services/relatorioService"
 import { funcionarioService } from "@/services/funcionarioServices"
+import { alertaService } from "@/services"
+import { useUsuarioNome } from "@/hooks/useUsuarioNome"
+import type { AlertaItem as AlertaRecenteItem } from "@/components/alertaRelat"
+import type { DistribuicaoItem } from "@/components/funcionarioRelat"
+
+const CATEGORIA_POR_NIVEL: Record<string, AlertaRecenteItem['categoria']> = {
+  critico: 'Grave',
+  medio: 'Médio',
+  razoavel: 'Leve',
+}
 
 
 
@@ -28,6 +38,8 @@ export default function Dashboard() {
   const [alertas, setAlertas] = useState<any>(null)
   const [equipamentos, setEquipamentos] = useState<any>(null)
   const [funcionarios, setFuncionarios] = useState<any>(null)
+  const [alertasRecentes, setAlertasRecentes] = useState<AlertaRecenteItem[]>([])
+  const nomeUsuario = useUsuarioNome()
 
   useEffect(() => {
 
@@ -35,15 +47,24 @@ export default function Dashboard() {
       try {
         setLoading(true)
 
-        const [resAlertas, resEquip, resFunc] = await Promise.all([
+        const [resAlertas, resEquip, resFunc, resAlertasRecentes] = await Promise.all([
           relatorioService.alertas(),
           relatorioService.equipamentos(),
-          funcionarioService.listar({ limit: 100 })
+          funcionarioService.listar({ limit: 100 }),
+          alertaService.listar({ limit: 10 }),
         ])
 
         setAlertas(resAlertas.data.data)
         setEquipamentos(resEquip.data.data)
         setFuncionarios(resFunc.data.data)
+        setAlertasRecentes(
+          (resAlertasRecentes.data.data ?? []).map((a): AlertaRecenteItem => ({
+            empresa: a.empresa?.nome ?? '—',
+            designacao: a.equipamento?.nome ?? '—',
+            categoria: CATEGORIA_POR_NIVEL[a.nivel] ?? 'Leve',
+            data: new Date(a.criadoEm).toLocaleString('pt-PT'),
+          }))
+        )
 
       } catch (err) {
         console.error("Erro ao carregar relatórios:", err)
@@ -56,6 +77,15 @@ export default function Dashboard() {
 
   }, [])
 
+  const distribuicaoPorEmpresa: DistribuicaoItem[] = Object.values(
+    (funcionarios ?? []).reduce((acc: Record<string, DistribuicaoItem>, f: any) => {
+      const nome = f.empresa?.nome ?? 'Sem empresa'
+      if (!acc[nome]) acc[nome] = { label: nome, quantidade: 0 }
+      acc[nome].quantidade++
+      return acc
+    }, {})
+  )
+
   return (
     <div>
       <Sidebar3>
@@ -63,7 +93,7 @@ export default function Dashboard() {
         <Container
           titulo="Relatórios"
           notificacao={<Bell size={20} />}
-          usuario="Sábado 28/02/2026"
+          usuario={nomeUsuario}
         >
 
           {/* LOADING SIMPLES */}
@@ -116,11 +146,11 @@ export default function Dashboard() {
           <div className="px-4 w-full flex gap-4 mb-4">
 
             <div className="flex-1">
-              <DistribuicaoFuncionarios />
+              <DistribuicaoFuncionarios dados={distribuicaoPorEmpresa} />
             </div>
 
             <div className="flex w-full">
-              <AlertasRecentes />
+              <AlertasRecentes alertas={alertasRecentes} />
             </div>
 
           </div>

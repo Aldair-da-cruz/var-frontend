@@ -62,6 +62,7 @@ export interface Funcionario {
   status:    'Ativo' | 'Inativo' | 'Pendente'
   empresaId: string
   criadoEm:  string
+  empresa?:  { id: string; nome: string }
 }
 
 export interface Equipamento {
@@ -87,6 +88,7 @@ export interface Alerta {
   equipamentoId: string
   lidoPorId:     string | null
   equipamento?:  { id: string; nome: string; localizacao: string }
+  empresa?:      { id: string; nome: string }
   lidoPor?:      { id: string; nome: string } | null
 }
 

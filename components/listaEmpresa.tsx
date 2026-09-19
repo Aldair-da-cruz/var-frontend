@@ -1,4 +1,4 @@
-import { ChevronRight, Building2, FileText, Monitor, AlertTriangle } from 'lucide-react'
+import { Building2, FileText, Monitor, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 
 interface EmpresaItem {
@@ -32,10 +32,6 @@ export default function ListaEmpresas({
           <AlertTriangle size={18} className="text-gray-400" />
           <h2 className="text-white text-base font-semibold">{titulo}</h2>
         </div>
-
-        <button className="text-blue-400 hover:text-blue-300">
-          <ChevronRight size={18} />
-        </button>
       </div>
 
       {/* GRID */}

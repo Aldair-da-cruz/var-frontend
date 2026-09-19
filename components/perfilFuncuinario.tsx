@@ -9,17 +9,21 @@ interface PerfilFuncionarioProps {
   telefone?: string;
   localizacao?: string;
   status?: "Ativo" | "Inativo" | "Em pausa";
+  avatarUrl?: string | null;
+  onAlterarFoto?: () => void;
 }
 
-export default function PerfilFuncionario({ 
-  nome = "Emmanuel Macongo",
-  cargo = "Engenheiro de HST",
-  empresa = "KG-Kituxi Tech",
-  perfilCompleto = 80,
-  email = "emmanuel.macongo@unitel.com",
-  telefone = "+244 946 857 209",
-  localizacao = "Luanda, Cidade alta",
-  status = "Ativo"
+export default function PerfilFuncionario({
+  nome = "",
+  cargo = "",
+  empresa = "",
+  perfilCompleto = 100,
+  email = "",
+  telefone = "—",
+  localizacao = "—",
+  status = "Ativo",
+  avatarUrl = null,
+  onAlterarFoto,
 }: PerfilFuncionarioProps) {
 
   const getStatusColor = () => {
@@ -45,7 +49,19 @@ export default function PerfilFuncionario({
       {/* Cabeçalho com nome e cargo */}
       <div className="flex items-start justify-between mb-3">
         <div className='flex items-center justify-center gap-2'>
-        <p className='p-5 bg-gray-700 flex items-center justify-center rounded-full w-[100px] h-[100px]'><User size={70} className="text-gray-500" /></p>
+        <button
+          type="button"
+          onClick={onAlterarFoto}
+          title="Alterar foto de perfil"
+          className='relative bg-gray-700 flex items-center justify-center rounded-full w-[100px] h-[100px] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity'
+        >
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={avatarUrl} alt={nome} className="w-full h-full object-cover" />
+          ) : (
+            <User size={70} className="text-gray-500" />
+          )}
+        </button>
          <div>
              <h2 className="text-white text-xl font-semibold">{nome}</h2>
           <p className="text-gray-400 text-sm mt-0.5">{cargo}</p>

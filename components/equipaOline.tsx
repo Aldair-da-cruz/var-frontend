@@ -1,4 +1,4 @@
-import { Users, ChevronRight, MapPin, Monitor, User2} from 'lucide-react';
+import { Users, MapPin, Monitor, User2} from 'lucide-react';
 
 interface Membro {
   nome: string;
@@ -9,14 +9,7 @@ interface EquipeOnlineProps {
   membros?: Membro[];
 }
 
-export default function EquipeOnline({ 
-  membros = [
-    { nome: "Estefanio Schofield", atividade: "Em campo" },
-    { nome: "Carlos Pinheiro", atividade: "Monitoramento" },
-    { nome: "Adilson Panzo", atividade: "Em campo" },
-    { nome: "Rui Mingas", atividade: "Monitoramento" },
-  ] 
-}: EquipeOnlineProps) {
+export default function EquipeOnline({ membros = [] }: EquipeOnlineProps) {
 
   const getAtividadeIcon = (atividade: string) => {
     switch(atividade) {
@@ -38,14 +31,14 @@ export default function EquipeOnline({
           <h2 className="text-white text-base font-semibold">Equipe Online</h2>
         </div>
         
-        <a href="#" className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors text-xs">
-          Ver detalhes
-          <ChevronRight size={14} />
-        </a>
+        <span className="text-gray-500 text-xs">{membros.length} online</span>
       </div>
 
       {/* Lista de membros */}
       <div className="flex-1 space-y-2">
+        {membros.length === 0 && (
+          <p className="text-gray-500 text-xs text-center py-4">Ninguém online neste momento.</p>
+        )}
         {membros.map((membro, index) => (
           <div key={index} className="flex items-center justify-between bg-black/30 border border-gray-700 p-2 rounded-lg">
             <div className="flex items-center gap-3">

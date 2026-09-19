@@ -1,7 +1,7 @@
 'use client';
-import { AlertTriangle, Building2, Calendar, ChevronRight } from 'lucide-react';
+import { AlertTriangle, Building2, Calendar } from 'lucide-react';
 
-interface AlertaItem {
+export interface AlertaItem {
   empresa: string;
   designacao: string;
   categoria: "Grave" | "Médio" | "Leve";
@@ -12,19 +12,7 @@ interface AlertasRecentesProps {
   alertas?: AlertaItem[];
 }
 
-export default function AlertasRecentes({ 
-  alertas = [
-    { empresa: "DSTV", designacao: "Operadora de TV", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Vodacom", designacao: "Telefonia e Inter...", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Angolatel...", designacao: "Comunicação e...", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Africel", designacao: "Comunicação e...", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Africel", designacao: "Comunicação e...", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Africel", designacao: "Comunicação e...", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Africel", designacao: "Comunicação e...", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Africel", designacao: "Comunicação e...", categoria: "Grave", data: "07/12/2025 10:48" },
-    { empresa: "Africel", designacao: "Comunicação e...", categoria: "Grave", data: "07/12/2025 10:48" }
-  ] 
-}: AlertasRecentesProps) {
+export default function AlertasRecentes({ alertas = [] }: AlertasRecentesProps) {
 
   const getCategoriaColor = (categoria: string) => {
     switch(categoria) {
@@ -43,10 +31,6 @@ export default function AlertasRecentes({
           <AlertTriangle size={18} className="text-red-400" />
           <h2 className="text-white text-lg font-semibold">Alertas recentes</h2>
         </div>
-        <button className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1">
-          Ver todos
-          <ChevronRight size={14} />
-        </button>
       </div>
 
       {/* Cabeçalho da tabela (fixo) */}
@@ -71,6 +55,9 @@ export default function AlertasRecentes({
           }
         `}</style>
         <div className="space-y-1 pr-1">
+          {alertas.length === 0 && (
+            <p className="text-gray-500 text-xs text-center py-4">Nenhum alerta recente.</p>
+          )}
           {alertas.map((alerta, index) => (
             <div key={index} className="grid grid-cols-4 gap-2 px-2 py-1.5 hover:bg-white/5 rounded-lg transition-colors">
               <div className="flex items-center gap-1">

@@ -13,12 +13,15 @@ import {
   EmpresaAlertaAPI,
   mapEmpresaAlerta
 } from "@/dto/alertEmpresa.dto"
+import { useUsuarioNome } from "@/hooks/useUsuarioNome"
 
 export default function Dashboard() {
 
   const [visualizacao, setVisualizacao] = useState<'grelha' | 'coluna'>('grelha')
   const [empresas, setEmpresas] = useState<EmpresaListaAlerta[]>([])
   const [loading, setLoading] = useState(true)
+  const [busca, setBusca] = useState('')
+  const nomeUsuario = useUsuarioNome()
 
   useEffect(() => {
     async function carregar() {
@@ -45,6 +48,10 @@ export default function Dashboard() {
     carregar()
   }, [])
 
+  const empresasFiltradas = empresas.filter((e) =>
+    !busca || e.nome.toLowerCase().includes(busca.toLowerCase()) || e.nif.toLowerCase().includes(busca.toLowerCase())
+  )
+
   return (
     <div>
       <Sidebar3>
@@ -52,7 +59,7 @@ export default function Dashboard() {
         <Container
           titulo="Gerir alertas"
           notificacao={<Bell size={20} />}
-          usuario="Sábado 28/02/2026"
+          usuario={nomeUsuario}
         >
 
           <div className="space-y-4">
@@ -61,7 +68,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-3">
 
               <div className="flex-1">
-                <PesquisarEmpresa placeholder="Pesquisar empresa..." />
+                <PesquisarEmpresa placeholder="Pesquisar empresa..." value={busca} onSearch={setBusca} />
               </div>
 
               <div className="flex bg-[#040928] border border-[#050e4c] rounded-lg p-1">
@@ -89,7 +96,7 @@ export default function Dashboard() {
             ) : (
               <div className="bg-[#040928] border border-[#050e4c] rounded-2xl p-4">
                 <ListaEmpresas
-                  empresas={empresas}
+                  empresas={empresasFiltradas}
                   titulo="Empresas com alertas"
                   visualizacao={visualizacao}
                 />

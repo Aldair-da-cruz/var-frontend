@@ -9,7 +9,23 @@ import EquipeOnline from "@/components/equipaOline"
 import Sidebar3 from "@/components/sidbar3"
 import { AlertCircle, AlertTriangle, Bell, MapPin, UserCheck } from "lucide-react"
 
-import { alertaService, funcionarioService, equipamentoService, logService } from "@/services"
+import { alertaService, funcionarioService, equipamentoService, logService, usuarioService } from "@/services"
+import { useUsuarioNome } from "@/hooks/useUsuarioNome"
+
+function humanizarAcao(acao: string): string {
+  const [metodo, caminho] = acao.split(' ')
+  const recurso = (caminho ?? '').replace('/api/v1/', '').split('/').filter(Boolean)[0] ?? 'sistema'
+  const verbos: Record<string, string> = { POST: 'Criação em', PATCH: 'Atualização em', DELETE: 'Remoção em', GET: 'Consulta em' }
+  return `${verbos[metodo] ?? 'Ação em'} ${recurso}`
+}
+
+function formatarHora(dataIso: string): string {
+  const data = new Date(dataIso)
+  const hoje = new Date()
+  const mesmodia = data.toDateString() === hoje.toDateString()
+  const hora = data.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
+  return mesmodia ? `Hoje - ${hora}` : `${data.toLocaleDateString('pt-PT')} - ${hora}`
+}
 
 interface DadosGrafico {
   dia: string
@@ -76,16 +92,21 @@ export default function Dashboard() {
 
   const [dadosGrafico, setDadosGrafico] = useState<DadosGrafico[]>([])
   const [carregando, setCarregando] = useState(true)
+  const [membrosOnline, setMembrosOnline] = useState<{ nome: string; atividade: 'Em campo' | 'Monitoramento' }[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [atividades, setAtividades] = useState<any[]>([])
+  const nomeUsuario = useUsuarioNome()
 
   useEffect(() => {
     async function carregarDados() {
       try {
-        const [resumoAlertas, funcionarios, equipamentos, logs] =
+        const [resumoAlertas, funcionarios, equipamentos, logs, online] =
           await Promise.allSettled([
             alertaService.resumo(),
             funcionarioService.listar({ status: "Ativo", limit: 1 }),
             equipamentoService.listar({ limit: 1 }),
             logService.listar({ limit: 200 }),
+            usuarioService.online(),
           ])
 
         // ALERTAS
@@ -129,6 +150,29 @@ export default function Dashboard() {
             : []
 
           setDadosGrafico(agruparLogsPorDia(logsData))
+
+          setAtividades(
+            logsData.slice(0, 15).map((log: any) => ({
+              tipo:      log.acao === 'LOGIN' ? 'login' : 'sistema',
+              descricao: log.acao === 'LOGIN'
+                ? `${log.usuario?.nome ?? 'Utilizador'} fez login`
+                : humanizarAcao(log.acao),
+              sistema: 'VAR',
+              hora:    formatarHora(log.criadoEm),
+              status:  log.acao === 'LOGIN' ? 'sucesso' : 'info',
+            }))
+          )
+        }
+
+        // EQUIPA ONLINE
+        if (online.status === "fulfilled") {
+          const onlineData = Array.isArray(online.value?.data?.data) ? online.value.data.data : []
+          setMembrosOnline(
+            onlineData.map((u: any) => ({
+              nome: u.nome,
+              atividade: u.papel === 'Cliente' ? 'Em campo' : 'Monitoramento',
+            }))
+          )
         }
       } catch (err) {
         console.error("Erro dashboard:", err)
@@ -146,7 +190,7 @@ export default function Dashboard() {
         <Container
           titulo="Dashboard"
           notificacao={<Bell size={20} />}
-          usuario={new Date().toLocaleDateString("pt-PT")}
+          usuario={nomeUsuario}
         >
           <div className="flex justify-around mb-4">
             <Caixa5 descricao="Funcionários activos" num={cards.funcionariosAtivos} icon={<UserCheck />} />
@@ -161,11 +205,11 @@ export default function Dashboard() {
             </div>
 
             <div className="w-125">
-              <EquipeOnline />
+              <EquipeOnline membros={membrosOnline} />
             </div>
           </div>
 
-          <AtividadesRecentes />
+          <AtividadesRecentes atividades={atividades} />
         </Container>
       </Sidebar3>
     </div>

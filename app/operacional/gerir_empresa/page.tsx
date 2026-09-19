@@ -27,6 +27,8 @@ import {
     EmpresaAPI
 } from "@/dto/empresa.dto"
 
+import { useUsuarioNome } from "@/hooks/useUsuarioNome"
+
 export default function Dashboard() {
 
     // ── STATES ─────────────────────────────
@@ -39,6 +41,7 @@ export default function Dashboard() {
     const [filtroLocal, setFiltroLocal] = useState("")
     const [filtroDesignacao, setFiltroDesignacao] = useState("")
     const [pesquisa, setPesquisa] = useState("")
+    const nomeUsuario = useUsuarioNome()
 
     // ── BUSCAR DADOS API ───────────────────
 
@@ -144,7 +147,7 @@ export default function Dashboard() {
                 <Container
                     titulo="Gerir empresas"
                     notificacao={<Bell size={20} />}
-                    usuario="Sábado 28/02/2026"
+                    usuario={nomeUsuario}
                 >
 
                     {/* CARDS */}

@@ -24,6 +24,7 @@ export interface Log {
   criadoEm: string
   usuarioId?: string
   empresaId?: string
+  usuario?: { id: string; nome: string; email: string; papel: string } | null
 }
 
 // =============================================================
@@ -53,6 +54,7 @@ export const empresaService = {
 
 export const usuarioService = {
   listar:    (params?: ListParams)                => api.get<PaginatedResponse<Usuario>>('/usuarios', { params }),
+  online:    ()                                   => api.get<ApiResponse<{ id: string; nome: string; papel: string; ultimoUso: string }[]>>('/usuarios/online'),
   buscar:    (id: string)                         => api.get<ApiResponse<Usuario>>(`/usuarios/${id}`),
   criar:     (data: Partial<Usuario> & { senha: string }) => api.post<ApiResponse<Usuario>>('/usuarios', data),
   atualizar: (id: string, data: Partial<Usuario>) => api.patch<ApiResponse<Usuario>>(`/usuarios/${id}`, data),
