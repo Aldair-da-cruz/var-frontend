@@ -11,6 +11,7 @@ import Tabela5, { Atividade } from "@/components/tabela5"
 import { Bell, Calendar, Layers, Users2 } from "lucide-react"
 import { api } from "@/lib/api"
 import Cookies from "js-cookie"
+import { useUsuarioPermissoes } from "@/hooks/useUsuarioPermissoes"
 
 const DIAS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
 
@@ -40,6 +41,7 @@ interface MetodoPagamento {
 }
 
 export default function Dashboard() {
+  const { permissaoAlertas } = useUsuarioPermissoes()
   const [cards,       setCards]       = useState<Cards>({ equipamentos: 0, funcionarios: 0, diasLicenca: 0, alertas: 0 })
   const [grafico,     setGrafico]     = useState<DadosGrafico[]>([])
   const [alertas,     setAlertas]     = useState<AlertaItem[]>([])
@@ -69,8 +71,8 @@ export default function Dashboard() {
           api.get('/equipamentos', { params: { empresaId, limit: 1 } }),
           api.get('/funcionarios',  { params: { empresaId, limit: 1 } }),
           api.get('/licencas',      { params: { empresaId, limit: 1 } }),
-          api.get('/alertas/resumo',{ params: { empresaId } }),
-          api.get('/alertas',       { params: { empresaId, limit: 5, lido: 'false' } }),
+          permissaoAlertas ? api.get('/alertas/resumo',{ params: { empresaId } }) : Promise.resolve(null),
+          permissaoAlertas ? api.get('/alertas',       { params: { empresaId, limit: 5, lido: 'false' } }) : Promise.resolve(null),
           api.get('/logs',          { params: { empresaId, limit: 200 } }),
           api.get('/pagamentos',    { params: { empresaId, limit: 100 } }),
         ])

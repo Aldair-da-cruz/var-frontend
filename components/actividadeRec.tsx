@@ -1,3 +1,6 @@
+'use client'
+import { useState } from 'react'
+
 export interface AtividadeRecente {
     descricao: string
     data: string
@@ -8,6 +11,9 @@ interface AtividadesRecentesProps {
 }
 
 export default function AtividadesRecentes({ atividades }: AtividadesRecentesProps) {
+    const [mostrarTodas, setMostrarTodas] = useState(false)
+    const visiveis = mostrarTodas ? atividades : atividades.slice(0, 5)
+
     return(
         <div className="w-full ">
             {/* Título */}
@@ -21,7 +27,7 @@ export default function AtividadesRecentes({ atividades }: AtividadesRecentesPro
             
             {/* Lista de Atividades */}
             <div className="space-y-3">
-                {atividades.map((atividade, index) => (
+                {visiveis.map((atividade, index) => (
                     <div key={index} className="grid grid-cols-2 items-start border-b border-gray-700 pb-2">
                         <span className="text-white text-sm font-light flex items-center gap-2">
                             <span>✅</span>
@@ -31,13 +37,15 @@ export default function AtividadesRecentes({ atividades }: AtividadesRecentesPro
                     </div>
                 ))}
             </div>
-            
-            {/* Link Ver mais */}
-            <div className="mt-4 text-right">
-                <a href="#" className="text-blue-400 text-sm hover:text-blue-300 transition-colors">
-                    Ver mais &gt;
-                </a>
-            </div>
+
+            {/* Link Ver mais/menos */}
+            {atividades.length > 5 && (
+                <div className="mt-4 text-right">
+                    <button onClick={() => setMostrarTodas((v) => !v)} className="text-blue-400 text-sm hover:text-blue-300 transition-colors">
+                        {mostrarTodas ? 'Ver menos' : 'Ver mais'} &gt;
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

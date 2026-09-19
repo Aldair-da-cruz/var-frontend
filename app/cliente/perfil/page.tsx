@@ -21,11 +21,20 @@ interface EmpresaAPI {
 }
 
 interface UsuarioAPI {
-  id:        string
-  nome:      string
-  email:     string
-  papel:     string
-  empresaId: string | null
+  id:               string
+  nome:             string
+  email:            string
+  papel:            string
+  empresaId:        string | null
+  permissaoAlertas: boolean
+  permissaoGestao:  boolean
+}
+
+function humanizarAcao(acao: string): string {
+  const [metodo, caminho] = acao.split(' ')
+  const recurso = (caminho ?? '').replace('/api/v1/', '').split('/').filter(Boolean)[0] ?? 'sistema'
+  const verbos: Record<string, string> = { POST: 'Criação em', PATCH: 'Atualização em', DELETE: 'Remoção em', GET: 'Consulta em' }
+  return `${verbos[metodo] ?? 'Ação em'} ${recurso}`
 }
 
 export default function PerfilPage() {
@@ -56,10 +65,10 @@ export default function PerfilPage() {
             api.get(`/empresas/${u.empresaId}`).then((res) => setEmpresa(res.data.data))
           )
           promises.push(
-            api.get('/logs', { params: { empresaId: u.empresaId, limit: 5 } }).then((res) => {
+            api.get('/logs', { params: { empresaId: u.empresaId, limit: 20 } }).then((res) => {
               const logs = res.data?.data ?? []
               setAtividades(logs.map((l: any) => ({
-                descricao: l.acao,
+                descricao: humanizarAcao(l.acao),
                 data:      new Date(l.criadoEm).toLocaleDateString('pt-PT', {
                   day: '2-digit', month: '2-digit', year: 'numeric',
                   hour: '2-digit', minute: '2-digit',
@@ -113,6 +122,19 @@ export default function PerfilPage() {
     }
   }
 
+  const handleTogglePermissao = async (chave: 'permissaoAlertas' | 'permissaoGestao', ativo: boolean) => {
+    if (!usuario) return
+    const anterior = usuario
+    const atualizado = { ...usuario, [chave]: ativo }
+    setUsuario(atualizado)
+    try {
+      await api.patch(`/usuarios/${usuario.id}/permissoes`, { [chave]: ativo })
+      Cookies.set('usuario', JSON.stringify({ ...JSON.parse(Cookies.get('usuario') ?? '{}'), [chave]: ativo }), { path: '/' })
+    } catch {
+      setUsuario(anterior)
+    }
+  }
+
   const dataHoje = new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })
 
   return (
@@ -147,10 +169,13 @@ export default function PerfilPage() {
 
               <div className="w-295 ml-3 mt-1 flex gap-3">
                 <div className="w-100 h-2.5 flex flex-col gap-3">
-                  <Permissoes permissoes={[
-                    { nome: "Permissão para alertas",       ativo: true  },
-                    { nome: "Permissão de acesso à gestão", ativo: false },
-                  ]} />
+                  <Permissoes
+                    permissoes={[
+                      { chave: 'permissaoAlertas', nome: 'Permissão para alertas',       ativo: usuario?.permissaoAlertas ?? true },
+                      { chave: 'permissaoGestao',  nome: 'Permissão de acesso à gestão', ativo: usuario?.permissaoGestao  ?? true },
+                    ]}
+                    onToggle={handleTogglePermissao}
+                  />
                   <Tema />
                 </div>
                 <div className="w-195 p-3 border-[#050e4c] border rounded-2xl shadow-xl bg-[#040928]">

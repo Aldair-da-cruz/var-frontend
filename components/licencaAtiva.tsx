@@ -8,6 +8,9 @@ interface LicencaAtivaProps {
   dataExpiracao?:  string
   diasRestantes?:  number
   onPagar?:        () => void
+  onRenovado?:     () => void
+  empresaId:       string
+  precoBase:       number
 }
 
 export default function LicencaAtiva({
@@ -15,6 +18,9 @@ export default function LicencaAtiva({
   dataExpiracao   = '—',
   diasRestantes   = 0,
   onPagar,
+  onRenovado,
+  empresaId,
+  precoBase,
 }: LicencaAtivaProps) {
   const [modalAberto, setModalAberto] = useState(false)
   const expirandoEmBreve = diasRestantes <= 30
@@ -47,10 +53,12 @@ export default function LicencaAtiva({
           </div>
 
           <div className="flex flex-col gap-3">
-            <button onClick={() => setModalAberto(true)}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-xs">
-              Renovar Agora
-            </button>
+            {plano !== '—' && (
+              <button onClick={() => setModalAberto(true)}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-xs">
+                Renovar Agora
+              </button>
+            )}
             <button onClick={onPagar}
               className="w-full bg-transparent hover:bg-gray-800 text-gray-300 hover:text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-xs border border-gray-700">
               Pagar licença
@@ -62,8 +70,10 @@ export default function LicencaAtiva({
       <ModalRenovarLicenca
         isOpen={modalAberto}
         onClose={() => setModalAberto(false)}
+        onRenovado={() => onRenovado?.()}
+        empresaId={empresaId}
         plano={plano}
-        valor={`AOA —`}
+        precoBase={precoBase}
       />
     </>
   )

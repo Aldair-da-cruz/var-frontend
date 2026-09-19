@@ -4,19 +4,21 @@ import Link from "next/link"
 import Cookies from 'js-cookie'
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
-import { 
-  LayoutDashboard, 
-  Users, 
-  CreditCard, 
-  User, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  CreditCard,
+  User,
+  Settings,
   LogOut,
   X
 } from "lucide-react"
+import { useUsuarioPermissoes } from "@/hooks/useUsuarioPermissoes"
 
 export default function Sidebar2({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
-    
+    const { permissaoGestao } = useUsuarioPermissoes()
+
     const [showLogoutModal, setShowLogoutModal] = useState(false)
 
     const isActive = (path: string) => {
@@ -56,6 +58,7 @@ const handleLogout = () => {
                         <span>Dashboard</span>
                     </Link>
 
+                    {permissaoGestao && (
                     <Link
                         href="/cliente/funcionarios"
                         className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/cliente/funcionarios")}`}
@@ -63,7 +66,9 @@ const handleLogout = () => {
                         <Users size={18} />
                         <span>Gerir funcionários</span>
                     </Link>
+                    )}
 
+                    {permissaoGestao && (
                     <Link
                         href="/cliente/pagamentos"
                         className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/cliente/pagamentos")}`}
@@ -71,6 +76,7 @@ const handleLogout = () => {
                         <CreditCard size={18} />
                         <span>Pagamentos & licenças</span>
                     </Link>
+                    )}
 
                     <Link
                         href="/cliente/perfil"

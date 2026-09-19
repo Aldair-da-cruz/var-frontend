@@ -1,41 +1,27 @@
-'use client'
-import { useState } from 'react';
+'use client';
 
 interface Permissao {
+    chave: 'permissaoAlertas' | 'permissaoGestao';
     nome: string;
-    descricao?: string;
-    ativo?: boolean;
+    ativo: boolean;
 }
 
 interface PermissoesProps {
-  permissoes?: Permissao[];
+  permissoes: Permissao[];
+  onToggle: (chave: Permissao['chave'], ativo: boolean) => void;
 }
 
-export default function Permissoes({ 
-  permissoes: permissoesIniciais = [
-    { nome: "Permissão para alertas", ativo: true },
-    { nome: "Permissão de acesso à gestão", ativo: false }
-  ] 
-}: PermissoesProps) {
-  const [permissoes, setPermissoes] = useState(permissoesIniciais);
-
-  const togglePermissao = (index: number) => {
-    setPermissoes(prev => prev.map((p, i) => 
-      i === index ? { ...p, ativo: !p.ativo } : p
-    ));
-  };
-
+export default function Permissoes({ permissoes, onToggle }: PermissoesProps) {
   return (
     <div className="border-[#050e4c] border rounded-2xl shadow-xl bg-[#040928] p-5 w-full mb-1.5">
       <h2 className="text-white text-xl font-semibold mb-4">Permissões</h2>
-      
+
       <div className="space-y-3">
-        {permissoes.map((permissao, index) => (
-          <div key={index} className="flex items-center justify-between">
+        {permissoes.map((permissao) => (
+          <div key={permissao.chave} className="flex items-center justify-between">
             <span className="text-white text-sm">{permissao.nome}</span>
-            {/* Switch funcional */}
             <button
-              onClick={() => togglePermissao(index)}
+              onClick={() => onToggle(permissao.chave, !permissao.ativo)}
               className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none ${
                 permissao.ativo ? 'bg-blue-600' : 'bg-gray-600'
               }`}

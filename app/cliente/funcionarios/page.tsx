@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import Caixa5 from "@/components/caixa5"
 import Container from "@/components/container"
 import FiltrosFuncionarios from "@/components/filtroFuncionario"
@@ -8,6 +9,7 @@ import Tabela6, { Funcionario } from "@/components/tabela6"
 import { Bell, UserCheck, Users2, UserX, X } from "lucide-react"
 import { api } from "@/lib/api"
 import Cookies from "js-cookie"
+import { useUsuarioPermissoes } from "@/hooks/useUsuarioPermissoes"
 
 interface FuncionarioAPI {
   id:        string
@@ -27,6 +29,13 @@ interface ResumoCards {
 }
 
 export default function Dashboard() {
+  const router = useRouter()
+  const { permissaoGestao } = useUsuarioPermissoes()
+
+  useEffect(() => {
+    if (!permissaoGestao) router.replace('/cliente/dashboard')
+  }, [permissaoGestao, router])
+
   const [funcionarios,   setFuncionarios]   = useState<FuncionarioAPI[]>([])
   const [resumo,         setResumo]         = useState<ResumoCards>({ total: 0, ativos: 0, inativos: 0, pendentes: 0 })
   const [filtroStatus,   setFiltroStatus]   = useState('')

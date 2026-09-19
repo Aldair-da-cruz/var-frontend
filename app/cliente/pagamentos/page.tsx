@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import Container from "@/components/container"
 import HistoricoPagamentos from "@/components/historicoPagamento"
 import LicencaAtiva from "@/components/licencaAtiva"
@@ -10,6 +11,7 @@ import { Bell } from "lucide-react"
 import { api } from "@/lib/api"
 import Cookies from "js-cookie"
 import jsPDF from "jspdf"
+import { useUsuarioPermissoes } from "@/hooks/useUsuarioPermissoes"
 
 interface LicencaAPI {
   id:               string
@@ -18,6 +20,12 @@ interface LicencaAPI {
   expiraEm:         string
   inicioEm:         string
   maxDeFuncionarios: number
+}
+
+const PLANO_PRECOS: Record<string, number> = {
+  Basico:       40000,
+  Profissional: 240000,
+  Premium:      480000,
 }
 
 interface PagamentoAPI {
@@ -81,6 +89,13 @@ function gerarReciboPDF(p: PagamentoAPI) {
 }
 
 export default function Dashboard() {
+  const router = useRouter()
+  const { permissaoGestao } = useUsuarioPermissoes()
+
+  useEffect(() => {
+    if (!permissaoGestao) router.replace('/cliente/dashboard')
+  }, [permissaoGestao, router])
+
   const [mostrarPagar, setMostrarPagar] = useState(false)
   const [licenca,      setLicenca]      = useState<LicencaAPI | null>(null)
   const [pagamentos,   setPagamentos]   = useState<PagamentoAPI[]>([])
@@ -175,6 +190,9 @@ export default function Dashboard() {
                     dataExpiracao={licenca ? new Date(licenca.expiraEm).toLocaleDateString('pt-PT') : '—'}
                     diasRestantes={diasRestantes}
                     onPagar={() => setMostrarPagar(true)}
+                    onRenovado={carregar}
+                    empresaId={empresaId}
+                    precoBase={PLANO_PRECOS[licenca?.plano ?? ''] ?? PLANO_PRECOS.Profissional}
                   />
                 )}
 
