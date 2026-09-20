@@ -11,13 +11,15 @@ import {
   User,
   Settings,
   LogOut,
-  X
+  X,
+  AlertTriangle,
+  History
 } from "lucide-react"
 import { useUsuarioPermissoes } from "@/hooks/useUsuarioPermissoes"
 
 export default function Sidebar2({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
-    const { permissaoGestao } = useUsuarioPermissoes()
+    const { permissaoGestao, permissaoAlertas } = useUsuarioPermissoes()
 
     const [showLogoutModal, setShowLogoutModal] = useState(false)
 
@@ -58,6 +60,16 @@ const handleLogout = () => {
                         <span>Dashboard</span>
                     </Link>
 
+                    {permissaoAlertas && (
+                    <Link
+                        href="/cliente/alertas"
+                        className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/cliente/alertas")}`}
+                    >
+                        <AlertTriangle size={18} />
+                        <span>Gerir alertas</span>
+                    </Link>
+                    )}
+
                     {permissaoGestao && (
                     <Link
                         href="/cliente/funcionarios"
@@ -92,6 +104,14 @@ const handleLogout = () => {
                     >
                         <Settings size={18} />
                         <span>Definições</span>
+                    </Link>
+
+                    <Link
+                        href="/cliente/atividade"
+                        className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/cliente/atividade")}`}
+                    >
+                        <History size={18} />
+                        <span>Actividade</span>
                     </Link>
                 </nav>
 

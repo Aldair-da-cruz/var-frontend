@@ -4,15 +4,16 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 import Cookies from "js-cookie"
-import { 
-  Home, 
-  FileEdit, 
-  ClipboardList, 
-  CreditCard, 
+import {
+  Home,
+  FileEdit,
+  ClipboardList,
+  CreditCard,
   FileText,
-  Settings, 
+  Settings,
   LogOut,
-  X
+  X,
+  History
 } from "lucide-react"
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
@@ -85,6 +86,14 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                     >
                         <FileText size={18} />
                         <span>Documentos</span>
+                    </Link>
+
+                    <Link
+                        href="/adm/logs"
+                        className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/adm/logs")}`}
+                    >
+                        <History size={18} />
+                        <span>Logs</span>
                     </Link>
 
                     <hr className="mx-4 my-2 border-[#333344]" />

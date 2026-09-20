@@ -22,9 +22,14 @@ export interface Log {
   id: string
   acao: string
   criadoEm: string
+  ip?: string | null
+  userAgent?: string | null
+  statusHttp?: number | null
+  nivelUsuario?: string
   usuarioId?: string
   empresaId?: string
   usuario?: { id: string; nome: string; email: string; papel: string } | null
+  empresa?: { id: string; nome: string } | null
 }
 
 // =============================================================

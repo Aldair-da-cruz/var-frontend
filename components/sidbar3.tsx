@@ -4,8 +4,8 @@ import Link from "next/link"
 import Cookies from 'js-cookie'
 import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
-import { 
-  LayoutDashboard, 
+import {
+  LayoutDashboard,
   Building2,
   AlertTriangle,
   Bell,
@@ -13,7 +13,9 @@ import {
   User,
   Settings,
   LogOut,
-  X
+  X,
+  CreditCard,
+  History
 } from "lucide-react"
 
 export default function Sidebar3({ children }: { children: React.ReactNode }) {
@@ -75,6 +77,14 @@ const handleLogout = () => {
                     </Link>
 
                     <Link
+                        href="/operacional/licencas"
+                        className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/operacional/licencas")}`}
+                    >
+                        <CreditCard size={18} />
+                        <span>Licenças & Pagamentos</span>
+                    </Link>
+
+                    <Link
                         href="/operacional/notificacao"
                         className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/operacional/notificacao")}`}
                     >
@@ -104,6 +114,14 @@ const handleLogout = () => {
                     >
                         <Settings size={18} />
                         <span>Definições</span>
+                    </Link>
+
+                    <Link
+                        href="/operacional/logs"
+                        className={`flex items-center gap-3 px-6 py-3 text-sm font-medium ml-3 mr-5 rounded-br-xl rounded-tr-xl rounded-bl-xl rounded-tl-xl duration-300 ease-in-out ${isActive("/operacional/logs")}`}
+                    >
+                        <History size={18} />
+                        <span>Logs</span>
                     </Link>
                 </nav>
 
