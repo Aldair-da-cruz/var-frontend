@@ -36,7 +36,9 @@ function periodoDe(dataIso: string): GrupoAlertas['periodo'] {
   ontem.setDate(hoje.getDate() - 1)
   if (data.toDateString() === hoje.toDateString()) return 'Hoje'
   if (data.toDateString() === ontem.toDateString()) return 'Ontem'
-  return 'Esta semana'
+  const diffDias = Math.floor((hoje.getTime() - data.getTime()) / (1000 * 60 * 60 * 24))
+  if (diffDias <= 7) return 'Esta semana'
+  return 'Mais antigos'
 }
 
 export default function Dashboard() {
@@ -75,7 +77,7 @@ export default function Dashboard() {
         return texto.includes(busca.toLowerCase());
     });
 
-    const grupos: GrupoAlertas[] = (['Hoje', 'Ontem', 'Esta semana'] as const).map((periodo) => ({
+    const grupos: GrupoAlertas[] = (['Hoje', 'Ontem', 'Esta semana', 'Mais antigos'] as const).map((periodo) => ({
         periodo,
         itens: alertasFiltrados
             .filter((a) => periodoDe(a.criadoEm) === periodo)

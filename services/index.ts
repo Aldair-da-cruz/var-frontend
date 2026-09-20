@@ -45,6 +45,7 @@ export const empresaService = {
   buscar:    (id: string)                       => api.get<ApiResponse<Empresa>>(`/empresas/${id}`),
   criar:     (data: Partial<Empresa>)           => api.post<ApiResponse<Empresa>>('/empresas', data),
   atualizar: (id: string, data: Partial<Empresa>) => api.patch<ApiResponse<Empresa>>(`/empresas/${id}`, data),
+  ativar:    (id: string)                       => api.patch<ApiResponse<Empresa>>(`/empresas/${id}/ativar`),
   desativar: (id: string)                       => api.delete(`/empresas/${id}`),
 }
 

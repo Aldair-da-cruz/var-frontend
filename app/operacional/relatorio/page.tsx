@@ -123,9 +123,9 @@ export default function Dashboard() {
                 icon={<UserCheck2 size={20} color="green" />}
               />
 
-              {/* Em pausa / inativos */}
+              {/* Inativos */}
               <Caixa5
-                descricao="Em pausa"
+                descricao="Inativos"
                 num={
                   funcionarios?.filter((f: any) => f.status === "Inativo")?.length ?? 0
                 }

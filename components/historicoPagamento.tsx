@@ -73,9 +73,9 @@ export default function HistoricoPagamentos({
           <FiltroSelect
             label="Método de pagamento"
             options={[
-              { value: 'multicaixa', label: 'Multicaixa Express' },
-              { value: 'iban', label: 'Transferência IBAN' },
-              { value: 'deposito', label: 'Depósito' },
+              { value: 'Multicaixa Express', label: 'Multicaixa Express' },
+              { value: 'Transferência IBAN', label: 'Transferência IBAN' },
+              { value: 'Depósito', label: 'Depósito' },
             ]}
             onChange={onFiltrarMetodo}
           />
@@ -95,10 +95,9 @@ export default function HistoricoPagamentos({
           <FiltroSelect
             label="Status"
             options={[
-              { value: 'pago', label: 'Pago' },
-              { value: 'pendente', label: 'Pendente' },
-              { value: 'atrasado', label: 'Atrasado' },
-              { value: 'cancelado', label: 'Cancelado' },
+              { value: 'Concluido', label: 'Pago' },
+              { value: 'Pendente', label: 'Pendente' },
+              { value: 'Reembolsado', label: 'Reembolsado' },
             ]}
             onChange={onFiltrarStatus}
           />

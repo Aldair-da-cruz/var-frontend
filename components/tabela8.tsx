@@ -1,12 +1,15 @@
-import { Pencil, Trash2, ToggleLeft, ToggleRight, Circle, CirclePause, Power } from 'lucide-react';
+import { Pencil, ToggleLeft, ToggleRight, Circle, Power } from 'lucide-react';
 
 export interface Empresa {
     empresa: string
     designacao: string
     local: string
     funcionarios: number
-    status: "Ativo" | "Inativo" | "Em pausa"
+    status: "Ativo" | "Inativo"
     alertas: number
+    onEditar?: () => void
+    onAtivar?: () => void
+    onDesativar?: () => void
 }
 
 interface Tabela8Props {
@@ -18,7 +21,6 @@ export default function Tabela8({dados}: Tabela8Props) {
     switch (status) {
       case "Ativo": return "text-green-400";
       case "Inativo": return "text-gray-400";
-      case "Em pausa": return "text-yellow-400";
       default: return "text-gray-300";
     }
   };
@@ -27,7 +29,6 @@ export default function Tabela8({dados}: Tabela8Props) {
     switch (status) {
       case "Ativo": return <Circle size={10} className="fill-green-400 text-green-400" />;
       case "Inativo": return <Power size={12} className="text-gray-400" />;
-      case "Em pausa": return <CirclePause size={14} className="text-yellow-400" />;
       default: return null;
     }
   };
@@ -64,6 +65,7 @@ export default function Tabela8({dados}: Tabela8Props) {
                   <div className="flex items-center justify-center gap-3">
                     {/* Editar */}
                     <button
+                      onClick={item.onEditar}
                       title="Editar"
                       className="text-blue-400 hover:text-blue-300 transition-colors"
                     >
@@ -72,6 +74,7 @@ export default function Tabela8({dados}: Tabela8Props) {
                     {/* Ativar / Desativar */}
                     {item.status === "Ativo" ? (
                       <button
+                        onClick={item.onDesativar}
                         title="Desativar"
                         className="text-yellow-400 hover:text-yellow-300 transition-colors"
                       >
@@ -79,19 +82,13 @@ export default function Tabela8({dados}: Tabela8Props) {
                       </button>
                     ) : (
                       <button
+                        onClick={item.onAtivar}
                         title="Ativar"
                         className="text-green-400 hover:text-green-300 transition-colors"
                       >
                         <ToggleLeft size={20} />
                       </button>
                     )}
-                    {/* Eliminar */}
-                    <button
-                      title="Eliminar"
-                      className="text-red-400 hover:text-red-300 transition-colors"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
                 </td>
               </tr>

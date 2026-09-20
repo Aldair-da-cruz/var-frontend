@@ -7,6 +7,7 @@ interface LicencaAtivaProps {
   plano?:          string
   dataExpiracao?:  string
   diasRestantes?:  number
+  status?:         'Ativa' | 'Expirada' | 'Suspensa'
   onPagar?:        () => void
   onRenovado?:     () => void
   empresaId:       string
@@ -17,13 +18,14 @@ export default function LicencaAtiva({
   plano           = '—',
   dataExpiracao   = '—',
   diasRestantes   = 0,
+  status          = 'Ativa',
   onPagar,
   onRenovado,
   empresaId,
   precoBase,
 }: LicencaAtivaProps) {
   const [modalAberto, setModalAberto] = useState(false)
-  const expirandoEmBreve = diasRestantes <= 30
+  const expirandoEmBreve = status === 'Ativa' && diasRestantes <= 30
 
   return (
     <>
@@ -39,7 +41,17 @@ export default function LicencaAtiva({
                 <span className="ml-2 text-xs text-gray-500">({diasRestantes} dias restantes)</span>
               )}
             </p>
-            {expirandoEmBreve ? (
+            {status === 'Suspensa' ? (
+              <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 mb-2 flex items-center gap-2">
+                <AlertCircle className="text-orange-500 shrink-0" size={18} />
+                <p className="text-orange-500 text-xs font-medium">⚠️ Licença suspensa — contacte o suporte</p>
+              </div>
+            ) : status === 'Expirada' ? (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-2 flex items-center gap-2">
+                <AlertCircle className="text-red-500 shrink-0" size={18} />
+                <p className="text-red-500 text-xs font-medium">⚠️ Licença expirada</p>
+              </div>
+            ) : expirandoEmBreve ? (
               <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-2 flex items-center gap-2">
                 <AlertCircle className="text-red-500 shrink-0" size={18} />
                 <p className="text-red-500 text-xs font-medium">⚠️ Aviso: Licença expira em breve!</p>

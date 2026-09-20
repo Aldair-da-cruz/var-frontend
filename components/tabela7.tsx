@@ -6,7 +6,7 @@ export interface Pagamento {
   valor:       string
   chaveLicenca: string
   metodo:      string
-  status:      'Pago' | 'Pendente' | 'Atrasado'
+  status:      'Pago' | 'Pendente' | 'Reembolsado'
   onBaixarPDF?: () => void
 }
 
@@ -17,10 +17,10 @@ interface Tabela7Props {
 export default function Tabela7({ dados }: Tabela7Props) {
   const statusColor = (status: string) => {
     switch (status) {
-      case 'Pago':     return 'text-green-400'
-      case 'Pendente': return 'text-yellow-400'
-      case 'Atrasado': return 'text-red-400'
-      default:         return 'text-gray-300'
+      case 'Pago':        return 'text-green-400'
+      case 'Pendente':    return 'text-yellow-400'
+      case 'Reembolsado': return 'text-blue-400'
+      default:            return 'text-gray-300'
     }
   }
 
@@ -52,7 +52,7 @@ export default function Tabela7({ dados }: Tabela7Props) {
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   item.status === 'Pago'     ? 'bg-green-600/20 text-green-400'  :
                   item.status === 'Pendente' ? 'bg-yellow-600/20 text-yellow-400' :
-                  'bg-red-600/20 text-red-400'
+                  'bg-blue-600/20 text-blue-400'
                 }`}>
                   {item.status}
                 </span>

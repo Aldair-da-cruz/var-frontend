@@ -17,6 +17,7 @@ interface LicencaAPI {
   id:               string
   plano:            string
   status:           string
+  statusCalculado:  'Ativa' | 'Expirada' | 'Suspensa'
   expiraEm:         string
   inicioEm:         string
   maxDeFuncionarios: number
@@ -101,6 +102,8 @@ export default function Dashboard() {
   const [pagamentos,   setPagamentos]   = useState<PagamentoAPI[]>([])
   const [carregando,   setCarregando]   = useState(true)
   const [filtroStatus, setFiltroStatus] = useState('')
+  const [filtroMetodo, setFiltroMetodo] = useState('')
+  const [filtroPeriodo, setFiltroPeriodo] = useState('')
   const [empresaId,    setEmpresaId]    = useState('')
   const [nomeUsuario,  setNomeUsuario]  = useState('')
   const [paginaAtual,  setPaginaAtual]  = useState(1)
@@ -120,6 +123,7 @@ export default function Dashboard() {
       setCarregando(true)
       const params: any = { empresaId, page: paginaAtual, limit: 10 }
       if (filtroStatus) params.status = filtroStatus
+      if (filtroMetodo) params.search = filtroMetodo
 
       const [resLic, resPag] = await Promise.allSettled([
         api.get('/licencas',   { params: { empresaId, limit: 1, orderBy: 'expiraEm' } }),
@@ -140,7 +144,7 @@ export default function Dashboard() {
     } finally {
       setCarregando(false)
     }
-  }, [empresaId, paginaAtual, filtroStatus])
+  }, [empresaId, paginaAtual, filtroStatus, filtroMetodo])
 
   useEffect(() => { carregar() }, [carregar])
 
@@ -152,13 +156,39 @@ export default function Dashboard() {
     ? Math.max(0, Math.ceil((new Date(licenca.expiraEm).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0
 
-  const dadosTabela: Pagamento[] = pagamentos.map((p) => ({
+  const inicioPeriodo = (chave: string): Date | null => {
+    const hoje = new Date()
+    const inicio = new Date(hoje)
+    inicio.setHours(0, 0, 0, 0)
+    if (chave === 'hoje') return inicio
+    if (chave === 'ontem') { inicio.setDate(inicio.getDate() - 1); return inicio }
+    if (chave === 'esta-semana') { inicio.setDate(inicio.getDate() - 7); return inicio }
+    if (chave === 'este-mes') { inicio.setMonth(inicio.getMonth() - 1); return inicio }
+    if (chave === 'este-ano') { inicio.setFullYear(inicio.getFullYear() - 1); return inicio }
+    return null
+  }
+
+  const pagamentosFiltrados = filtroPeriodo
+    ? pagamentos.filter((p) => {
+        const desde = inicioPeriodo(filtroPeriodo)
+        if (!desde) return true
+        const data = new Date(p.criadoEm)
+        if (filtroPeriodo === 'ontem') {
+          const ateOntem = new Date(desde)
+          ateOntem.setDate(ateOntem.getDate() + 1)
+          return data >= desde && data < ateOntem
+        }
+        return data >= desde
+      })
+    : pagamentos
+
+  const dadosTabela: Pagamento[] = pagamentosFiltrados.map((p) => ({
     id:           p.id,
     data:         new Date(p.criadoEm).toLocaleDateString('pt-PT'),
     valor:        `AOA ${Number(p.valor).toLocaleString('pt-PT')},00`,
     chaveLicenca: p.id.slice(0, 8).toUpperCase(),
     metodo:       p.referencia ?? '—',
-    status:       p.status === 'Concluido' ? 'Pago' : p.status === 'Reembolsado' ? 'Atrasado' : 'Pendente',
+    status:       p.status === 'Concluido' ? 'Pago' : p.status === 'Reembolsado' ? 'Reembolsado' : 'Pendente',
     onBaixarPDF:  () => gerarReciboPDF(p),
   }))
 
@@ -189,6 +219,7 @@ export default function Dashboard() {
                     plano={licenca?.plano ?? '—'}
                     dataExpiracao={licenca ? new Date(licenca.expiraEm).toLocaleDateString('pt-PT') : '—'}
                     diasRestantes={diasRestantes}
+                    status={licenca?.statusCalculado ?? 'Ativa'}
                     onPagar={() => setMostrarPagar(true)}
                     onRenovado={carregar}
                     empresaId={empresaId}
@@ -198,8 +229,8 @@ export default function Dashboard() {
 
                 <HistoricoPagamentos
                   onFiltrarStatus={(s) => { setFiltroStatus(s); setPaginaAtual(1) }}
-                  onFiltrarPeriodo={() => {}}
-                  onFiltrarMetodo={() => {}}
+                  onFiltrarPeriodo={setFiltroPeriodo}
+                  onFiltrarMetodo={(m) => { setFiltroMetodo(m); setPaginaAtual(1) }}
                   onExportar={exportarTodos}
                 />
               </div>

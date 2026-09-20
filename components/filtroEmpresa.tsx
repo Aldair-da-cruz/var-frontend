@@ -1,68 +1,33 @@
 import { Search } from 'lucide-react';
 
 interface FiltrosEmpresasProps {
-  onStatusChange?: (status: string) => void;
-  onLocalChange?: (local: string) => void;
-  onDesignacaoChange?: (designacao: string) => void;
+  status?: 'Ativo' | 'Inativo';
+  onStatusChange?: (status: 'Ativo' | 'Inativo') => void;
   onSearchChange?: (search: string) => void;
 }
 
 export default function FiltrosEmpresas({
+  status = 'Ativo',
   onStatusChange,
-  onLocalChange,
-  onDesignacaoChange,
   onSearchChange
 }: FiltrosEmpresasProps) {
   return (
-    <div className="w-full  p-4 mb-4">
-      <div className="flex items-center gap-[360px]">
-        {/* Select Status */}
-        <div className='flex gap-1'>
-            <div className="flex-1 min-w-[150px]">
+    <div className="w-full p-4 mb-4">
+      <div className="flex items-center gap-6">
+        {/* Toggle Status */}
+        <div className="flex-1 min-w-[150px]">
           <label className="block text-gray-400 text-xs mb-1">Status</label>
-          <select 
-            onChange={(e) => onStatusChange?.(e.target.value)}
-            className="w-[200px] bg-[#040928] text-white border border-[#1a2942] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-          >
-            <option value="">Todos</option>
-            <option value="Ativo">Ativo</option>
-            <option value="Inativo">Inativo</option>
-            <option value="Em pausa">Em pausa</option>
-          </select>
-        </div>
-
-        {/* Select Local */}
-        <div className="flex-1 min-w-[150px]">
-          <label className="block text-gray-400 text-xs mb-1">Local</label>
-          <select 
-            onChange={(e) => onLocalChange?.(e.target.value)}
-            className="w-[200px] bg-[#040928] text-white border border-[#1a2942] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-          >
-            <option value="">Todos</option>
-            <option value="Luanda">Luanda</option>
-            <option value="Huambo">Huambo</option>
-            <option value="Malanje">Malanje</option>
-            <option value="Cabinda">Cabinda</option>
-            <option value="Moxico">Moxico</option>
-            <option value="Icolo e Bengo">Icolo e Bengo</option>
-          </select>
-        </div>
-
-        {/* Select Designação */}
-        <div className="flex-1 min-w-[150px]">
-          <label className="block text-gray-400 text-xs mb-1">Designação</label>
-          <select 
-            onChange={(e) => onDesignacaoChange?.(e.target.value)}
-            className="w-[200px] bg-[#040928] text-white border border-[#1a2942] rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-          >
-            <option value="">Todas</option>
-            <option value="Tecnologia">Tecnologia</option>
-            <option value="Comunicações">Comunicações</option>
-            <option value="Informática">Informática</option>
-            <option value="Cabiamento">Cabiamento</option>
-            <option value="Infraestrutura">Infraestrutura</option>
-          </select>
-        </div>
+          <div className="flex gap-1 bg-[#040928] border border-[#1a2942] rounded-lg p-1 w-[200px]">
+            {(['Ativo', 'Inativo'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => onStatusChange?.(s)}
+                className={`flex-1 px-3 py-1.5 rounded-md text-sm transition-colors ${status === s ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Campo de Pesquisa */}
@@ -74,7 +39,7 @@ export default function FiltrosEmpresas({
               type="text"
               placeholder="pesquisar empresa..."
               onChange={(e) => onSearchChange?.(e.target.value)}
-              className="w-[200px] bg-[#040928] text-white border border-[#1a2942] rounded-lg pl-10 pr-3 py-2.5 text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-[280px] bg-[#040928] text-white border border-[#1a2942] rounded-lg pl-10 pr-3 py-2.5 text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
         </div>

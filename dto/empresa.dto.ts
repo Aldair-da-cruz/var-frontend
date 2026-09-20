@@ -1,12 +1,6 @@
 import type { Empresa } from "@/components/tabela8"
 
-export type EmpresaStatus = "Ativo" | "Inativo" | "Em pausa"
-
-function normalizeStatus(status: string): EmpresaStatus {
-    if (status === "Ativo") return "Ativo"
-    if (status === "Inativo") return "Inativo"
-    return "Em pausa"
-  }
+export type EmpresaStatus = "Ativo" | "Inativo"
 
 export interface EmpresaAPI {
   id: string
@@ -28,7 +22,7 @@ export function mapEmpresaToTabela(item: EmpresaAPI): Empresa {
       designacao: item.email,
       local: item.cnpj,
       funcionarios: item._count?.funcionarios ?? 0,
-      status: normalizeStatus(item.status),
+      status: item.status,
       alertas: item._count?.alertas ?? 0
     }
   }

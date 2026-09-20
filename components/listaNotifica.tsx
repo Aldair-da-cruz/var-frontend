@@ -10,7 +10,7 @@ export interface AlertaItem {
 }
 
 export interface GrupoAlertas {
-  periodo: "Hoje" | "Ontem" | "Esta semana";
+  periodo: "Hoje" | "Ontem" | "Esta semana" | "Mais antigos";
   itens: AlertaItem[];
 }
 

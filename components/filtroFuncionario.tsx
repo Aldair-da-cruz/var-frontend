@@ -5,13 +5,15 @@ interface FiltrosFuncionariosProps {
   onCargoChange?: (cargo: string) => void;
   onSearchChange?: (search: string) => void;
   onNovoFuncionario?: () => void;
+  cargos?: string[];
 }
 
 export default function FiltrosFuncionarios({
   onStatusChange,
   onCargoChange,
   onSearchChange,
-  onNovoFuncionario
+  onNovoFuncionario,
+  cargos = []
 }: FiltrosFuncionariosProps) {
   return (
     <div className="w-[1180px] rounded-2xl  mb-10 mt-3 ml-3">
@@ -40,12 +42,9 @@ export default function FiltrosFuncionarios({
             className="w-full  text-white bg-[#040928]  border border-[#050e4c] rounded-lg px-3 py-2 text-sm outline-none "
           >
             <option value="">Todos</option>
-            <option value="Engenheiro de TI">Engenheiro de TI</option>
-            <option value="Técnico de Cabos">Técnico de Cabos</option>
-            <option value="Técnico de montagem">Técnico de montagem</option>
-            <option value="Especialista de cctv">Especialista de cctv</option>
-            <option value="Engenheiro de redes">Engenheiro de redes</option>
-            <option value="Reparador de Cabos">Reparador de Cabos</option>
+            {cargos.map((cargo) => (
+              <option key={cargo} value={cargo}>{cargo}</option>
+            ))}
           </select>
         </div>
 

@@ -191,6 +191,7 @@ export default function Dashboard() {
             onCargoChange={setFiltroCargo}
             onSearchChange={(s) => { setPesquisa(s); setPaginaAtual(1) }}
             onNovoFuncionario={() => { setErroNovo(''); setModalNovo(true) }}
+            cargos={Array.from(new Set(funcionarios.map((f) => f.cargo))).sort()}
           />
 
           <div className="pb-10 w-[1180px] ml-3 mt-2 bg-[#040928] rounded-2xl shadow-xl">
